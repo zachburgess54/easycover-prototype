@@ -5,10 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>EasyCover Wraps – Prototype</title>
 
-  <!-- Tailwind via CDN -->
+  <!-- Tailwind CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
 
-  <!-- React + ReactDOM (production) + Babel -->
+  <!-- React UMD + Babel (order matters) -->
   <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
   <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
   <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
@@ -16,56 +16,61 @@
 <body class="bg-white text-black">
   <div id="root"></div>
 
-  <script type="text/babel">
+  <!-- App -->
+  <script type="text/babel" data-presets="react,env">
     const { useState } = React;
 
-    // ---- Data with image filenames in your repo root ----
+    /* ---------- DATA ---------- */
     const collections = [
       {
         id: 1,
         name: "Marble Series",
         price: 8.99,
-        tags: ["Water Bottle", "Gloss"],
+        tags: ["Water Bottle","Gloss"],
         description: "High-gloss removable marble pattern for 32oz bottles.",
-        image: "./marble-series.png",
+        img: "marble-series.png",
       },
       {
         id: 2,
         name: "Camo Series",
         price: 7.99,
-        tags: ["Hydro", "Matte"],
+        tags: ["Hydro","Matte"],
         description: "Matte camo wrap; bubble-resistant air-release channels.",
-        image: "./camo.png",
+        img: "camo.png",
       },
       {
         id: 3,
         name: "Pastel Gradient",
         price: 9.49,
-        tags: ["Stanley", "Satin"],
-        description: "Satin red→purple gradient with easy peel-and-replace.",
-        image: "./pastel-gradient.png",
+        tags: ["Stanley","Satin"],
+        description: "Satin pastel gradient with easy peel-and-replace.",
+        img: "pastel-gradient.png",
       },
       {
         id: 4,
         name: "NY Skyline",
         price: 10.99,
-        tags: ["City", "Gloss"],
-        description: "Street-art skyline with removable, residue-free adhesive.",
-        image: "./skyline.png",
+        tags: ["City","Gloss"],
+        description: "City collection featuring removable skyline wraps.",
+        img: "skyline.png",
       },
     ];
 
     const faqs = [
-      { q: "Will the wrap damage my bottle?", a: "No. Our removable vinyl is designed to peel without residue on most finishes." },
-      { q: "What if my wrap has bubbles or is mis-sized?", a: "We’ll send a complimentary replacement—just contact support with a photo." },
-      { q: "Are uploads private?", a: "Yes, uploads are stored securely for order fulfillment only (mocked here)." },
+      { q: "Will the wrap damage my bottle?",
+        a: "No. Our removable vinyl is designed to peel without residue on most finishes." },
+      { q: "What if my wrap has bubbles or is mis-sized?",
+        a: "We’ll send a complimentary replacement—just contact support with a photo." },
+      { q: "Are uploads private?",
+        a: "Yes, uploads are stored securely for order fulfillment only (mocked here)." },
     ];
 
+    /* ---------- SMALL UI ---------- */
     const Badge = ({ children }) => (
       <span className="inline-flex items-center rounded-full border px-2 py-0.5 text-xs">{children}</span>
     );
 
-    const Section = ({ title, children, subtitle }) => (
+    const Section = ({ title, subtitle, children }) => (
       <section className="max-w-6xl mx-auto px-4 py-10">
         <h2 className="text-2xl font-semibold">{title}</h2>
         {subtitle && <p className="mt-1 text-sm text-gray-600">{subtitle}</p>}
@@ -77,157 +82,158 @@
       <div className="rounded-2xl shadow-sm border p-4 bg-white">{children}</div>
     );
 
-    function Stepper({ step }) {
-      const steps = ["Home", "Shop", "Product", "Customize", "Cart", "Checkout", "Done"];
+    const Stepper = ({ step }) => {
+      const steps = ["Home","Shop","Product","Customize","Cart","Checkout","Done"];
       return (
         <div className="flex items-center gap-2 text-xs">
-          {steps.map((s, i) => (
+          {steps.map((s,i)=>(
             <div key={s} className="flex items-center gap-2">
-              <div className={`h-6 w-6 grid place-items-center rounded-full border ${i <= step ? "bg-black text-white border-black" : "bg-white"}`}>{i + 1}</div>
-              <span className={i <= step ? "font-medium" : "text-gray-500"}>{s}</span>
-              {i < steps.length - 1 && <span className="text-gray-300">→</span>}
+              <div className={`h-6 w-6 grid place-items-center rounded-full border ${i<=step ? "bg-black text-white border-black":"bg-white"}`}>{i+1}</div>
+              <span className={i<=step ? "font-medium":"text-gray-500"}>{s}</span>
+              {i<steps.length-1 && <span className="text-gray-300">→</span>}
             </div>
           ))}
         </div>
       );
-    }
+    };
 
-    function Navbar({ onNavigate, current, mobileView, setMobileView, goTo }) {
+    /* ---------- PAGES ---------- */
+    const Navbar = ({ onNavigate, current, mobileView, setMobileView, goTo }) => {
       const items = [
-        ["Home", () => goTo(0)],
-        ["Shop", () => goTo(1)],
-        ["Materials", () => onNavigate("materials")],
-        ["Pricing", () => onNavigate("pricing")],
-        ["Support", () => onNavigate("support")],
-        ["Account", () => onNavigate("account")],
+        ["Home", ()=>goTo(0)],
+        ["Shop", ()=>goTo(1)],
+        ["Materials", ()=>onNavigate("materials")],
+        ["Pricing", ()=>onNavigate("pricing")],
+        ["Support", ()=>onNavigate("support")],
+        ["Account", ()=>onNavigate("account")],
       ];
       return (
         <header className="sticky top-0 z-10 bg-white/80 backdrop-blur border-b">
           <div className="max-w-6xl mx-auto px-4 py-3 flex items-center gap-4">
             <div className="flex items-center gap-3">
-              <div className="h-9 w-9 rounded-xl bg-black text-white grid place-items-center font-bold">EC</div>
+              <img src="hero.png" alt="EasyCover logo" className="h-9 w-9 rounded-xl object-cover"/>
               <div className="font-semibold">EasyCover Wraps</div>
             </div>
             <nav className="ml-auto hidden md:flex items-center gap-6 text-sm">
-              {items.map(([label, fn]) => (
+              {items.map(([label,fn])=>(
                 <button key={label} onClick={fn} className={`hover:underline ${current===label?"font-semibold":""}`}>{label}</button>
               ))}
-              <button onClick={() => onNavigate("cart")} className="rounded-xl border px-3 py-1 text-sm">Cart</button>
+              <button onClick={()=>onNavigate("cart")} className="rounded-xl border px-3 py-1 text-sm">Cart</button>
               <div className="flex items-center gap-2 pl-3 ml-3 border-l">
                 <span className="text-xs text-gray-600">App Prototype</span>
-                <input aria-label="Toggle app prototype" type="checkbox" checked={mobileView} onChange={(e) => setMobileView(e.target.checked)} />
+                <input type="checkbox" aria-label="Toggle app prototype" checked={mobileView} onChange={e=>setMobileView(e.target.checked)} />
               </div>
             </nav>
           </div>
         </header>
       );
-    }
+    };
 
-    function Home({ goTo, onNavigate }) {
-      return (
-        <>
-          <section className="bg-gradient-to-br from-gray-50 to-white border-b">
-            <div className="max-w-6xl mx-auto px-4 py-14 grid md:grid-cols-2 gap-8 items-center">
-              <div>
-                <h1 className="text-4xl font-bold leading-tight">Removable wraps for bottles & accessories</h1>
-                <p className="mt-3 text-gray-600">Peel, stick, and swap designs without residue. Built for clean application with bubble-resistant channels.</p>
-                <div className="mt-6 flex gap-3">
-                  <button className="px-4 py-2 rounded-xl bg-black text-white" onClick={() => goTo(1)}>Shop wraps</button>
-                  <button className="px-4 py-2 rounded-xl border" onClick={() => onNavigate("customizer")}>Start custom</button>
-                </div>
-                <div className="mt-6 flex gap-2">
-                  <Badge>Removable</Badge>
-                  <Badge>Complimentary Replacements</Badge>
-                  <Badge>Sized-Right Guarantee</Badge>
-                </div>
+    const Home = ({ goTo, onNavigate }) => (
+      <>
+        <section className="bg-gradient-to-br from-gray-50 to-white border-b">
+          <div className="max-w-6xl mx-auto px-4 py-14 grid md:grid-cols-2 gap-8 items-center">
+            <div>
+              <h1 className="text-4xl font-bold leading-tight">Removable wraps for bottles & accessories</h1>
+              <p className="mt-3 text-gray-600">
+                Peel, stick, and swap designs without residue. Built for clean application with bubble-resistant channels.
+              </p>
+              <div className="mt-6 flex gap-3">
+                <button className="px-4 py-2 rounded-xl bg-black text-white" onClick={()=>goTo(1)}>Shop wraps</button>
+                <button className="px-4 py-2 rounded-xl border" onClick={()=>onNavigate("customizer")}>Start custom</button>
               </div>
-
-              <!-- HERO IMAGE -->
-              <div className="aspect-[4/3] bg-gray-200 rounded-2xl overflow-hidden grid">
-                <img src="./hero.png" alt="EasyCover hero" className="w-full h-full object-cover"/>
+              <div className="mt-6 flex gap-2">
+                <Badge>Removable</Badge>
+                <Badge>Complimentary Replacements</Badge>
+                <Badge>Sized-Right Guarantee</Badge>
               </div>
             </div>
-          </section>
 
-          <Section title="Featured collections" subtitle="Tap a design to see product details">
-            <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
-              {collections.map((c) => (
-                <Card key={c.id}>
-                  <div className="aspect-square rounded-xl bg-gray-100 overflow-hidden">
-                    <img src={c.image} alt={c.name} className="w-full h-full object-cover"/>
-                  </div>
-                  <div className="mt-3">
-                    <div className="font-medium">{c.name}</div>
-                    <div className="text-sm text-gray-600">${c.price.toFixed(2)}</div>
-                    <div className="flex gap-2 mt-2">
-                      {c.tags.map((t) => (<Badge key={t}>{t}</Badge>))}
-                    </div>
-                    <button className="mt-3 w-full rounded-xl border px-3 py-2" onClick={() => onNavigate("product", c)}>View product</button>
-                  </div>
-                </Card>
-              ))}
+            <!-- HERO IMAGE SLOT (now real image) -->
+            <div className="aspect-[4/3] bg-gray-200 rounded-2xl grid place-items-center overflow-hidden">
+              <img src="hero.png" alt="EasyCover hero" className="w-full h-full object-cover"/>
             </div>
-          </Section>
+          </div>
+        </section>
 
-          <Section title="How it works">
-            <div className="grid md:grid-cols-3 gap-4">
-              {["Choose or upload a design","Align and apply without bubbles","Peel off cleanly—swap anytime"].map((t, i) => (
-                <Card key={i}>
-                  <div className="aspect-video rounded-xl bg-gray-100 grid place-items-center text-gray-500">
-                    <span className="text-xs">Step {i+1} image</span>
+        <Section title="Featured collections" subtitle="Tap a design to see product details">
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            {collections.map(c => (
+              <Card key={c.id}>
+                <div className="aspect-square rounded-xl bg-gray-100 overflow-hidden">
+                  <img src={c.img} alt={c.name} className="w-full h-full object-cover"/>
+                </div>
+                <div className="mt-3">
+                  <div className="font-medium">{c.name}</div>
+                  <div className="text-sm text-gray-600">${c.price.toFixed(2)}</div>
+                  <div className="flex gap-2 mt-2">
+                    {c.tags.map(t => <Badge key={t}>{t}</Badge>)}
                   </div>
-                  <div className="mt-3 font-medium">{t}</div>
-                </Card>
-              ))}
-            </div>
-          </Section>
-        </>
-      );
-    }
-
-    function Materials() {
-      return (
-        <Section title="Materials & Quality" subtitle="Removable vinyl with optional static-cling and polyolefin alternatives">
-          <div className="grid md:grid-cols-2 gap-6">
-            <Card>
-              <h3 className="font-medium">Vinyl (Default)</h3>
-              <p className="text-sm text-gray-600 mt-2">Durable, water-resistant; compatible with curved bottles; repositionable during install.</p>
-              <ul className="list-disc pl-5 text-sm mt-2 space-y-1">
-                <li>Air-release channels for bubble control</li>
-                <li>Residue-free removal on most finishes</li>
-                <li>Gloss / Matte / Satin options</li>
-              </ul>
-            </Card>
-            <Card>
-              <h3 className="font-medium">Alternatives</h3>
-              <ul className="list-disc pl-5 text-sm mt-2 space-y-1">
-                <li>Static-cling film for ultra-easy removability</li>
-                <li>Polyolefin film as a PVC-free option</li>
-              </ul>
-              <p className="text-xs text-gray-500 mt-3">Supplier/distributor sourced; production-grade quality.</p>
-            </Card>
+                  <button className="mt-3 w-full rounded-xl border px-3 py-2" onClick={()=>onNavigate("product", c)}>
+                    View product
+                  </button>
+                </div>
+              </Card>
+            ))}
           </div>
         </Section>
-      );
-    }
 
-    function Pricing() {
+        <Section title="How it works">
+          <div className="grid md:grid-cols-3 gap-4">
+            {["Choose or upload a design","Align and apply without bubbles","Peel off cleanly—swap anytime"].map((t,i)=>(
+              <Card key={i}>
+                <div className="aspect-video rounded-xl bg-gray-100 grid place-items-center text-gray-500">
+                  <span className="text-xs">Step {i+1} image</span>
+                </div>
+                <div className="mt-3 font-medium">{t}</div>
+              </Card>
+            ))}
+          </div>
+        </Section>
+      </>
+    );
+
+    const Materials = () => (
+      <Section title="Materials & Quality" subtitle="Removable vinyl with optional static-cling and polyolefin alternatives">
+        <div className="grid md:grid-cols-2 gap-6">
+          <Card>
+            <h3 className="font-medium">Vinyl (Default)</h3>
+            <p className="text-sm text-gray-600 mt-2">Durable, water-resistant; compatible with curved bottles; repositionable during install.</p>
+            <ul className="list-disc pl-5 text-sm mt-2 space-y-1">
+              <li>Air-release channels for bubble control</li>
+              <li>Residue-free removal on most finishes</li>
+              <li>Gloss / Matte / Satin options</li>
+            </ul>
+          </Card>
+          <Card>
+            <h3 className="font-medium">Alternatives</h3>
+            <ul className="list-disc pl-5 text-sm mt-2 space-y-1">
+              <li>Static-cling film for ultra-easy removability</li>
+              <li>Polyolefin film as a PVC-free option</li>
+            </ul>
+            <p className="text-xs text-gray-500 mt-3">Supplier/distributor sourced; production-grade quality.</p>
+          </Card>
+        </div>
+      </Section>
+    );
+
+    const Pricing = () => {
       const tiers = [
-        { name: "Single Wrap", price: 9.99, features: ["1 design", "Residue-free removal", "Standard finish"] },
-        { name: "Bundle (3)", price: 24.99, features: ["Any 3 designs", "Mix finishes", "Save 15%"] },
-        { name: "Custom Upload", price: 12.99, features: ["Upload artwork", "Proof preview", "One free reprint"] },
+        { name: "Single Wrap", price: 9.99, features: ["1 design","Residue-free removal","Standard finish"] },
+        { name: "Bundle (3)", price: 24.99, features: ["Any 3 designs","Mix finishes","Save 15%"] },
+        { name: "Custom Upload", price: 12.99, features: ["Upload artwork","Proof preview","One free reprint"] },
       ];
       return (
         <Section title="Pricing" subtitle="Simple pricing with free replacement on fit/quality issues">
           <div className="grid lg:grid-cols-3 gap-4">
-            {tiers.map((tier) => (
-              <Card key={tier.name}>
+            {tiers.map(t=>(
+              <Card key={t.name}>
                 <div className="flex items-baseline justify-between">
-                  <div className="font-medium">{tier.name}</div>
-                  <div className="text-2xl font-semibold">${tier.price.toFixed(2)}</div>
+                  <div className="font-medium">{t.name}</div>
+                  <div className="text-2xl font-semibold">${t.price.toFixed(2)}</div>
                 </div>
                 <ul className="list-disc pl-5 text-sm mt-2 space-y-1">
-                  {tier.features.map((f) => <li key={f}>{f}</li>)}
+                  {t.features.map(f => <li key={f}>{f}</li>)}
                 </ul>
                 <button className="mt-4 w-full rounded-xl border px-3 py-2">Select</button>
               </Card>
@@ -235,9 +241,9 @@
           </div>
         </Section>
       );
-    }
+    };
 
-    function Product({ product, onCustomize }) {
+    const Product = ({ product, onCustomize }) => {
       if (!product) {
         return (
           <Section title="Pick a product">
@@ -250,7 +256,7 @@
           <div className="grid md:grid-cols-2 gap-6">
             <Card>
               <div className="aspect-square rounded-xl bg-gray-100 overflow-hidden">
-                <img src={product.image} alt={product.name} className="w-full h-full object-cover"/>
+                <img src={product.img} alt={product.name} className="w-full h-full object-cover"/>
               </div>
             </Card>
             <div>
@@ -267,20 +273,19 @@
           </div>
         </Section>
       );
-    }
+    };
 
-    function Customizer({ onAddToCart }) {
+    const Customizer = ({ onAddToCart }) => {
       const [finish, setFinish] = useState("Gloss");
       const [bottle, setBottle] = useState("32oz Hydro");
       const [fileName, setFileName] = useState("");
-
       return (
         <Section title="Design Customizer" subtitle="Choose bottle, finish, and upload optional artwork (mock)">
           <Card>
             <div className="grid md:grid-cols-3 gap-6">
               <div>
                 <label className="text-sm font-medium">Bottle</label>
-                <select value={bottle} onChange={(e)=>setBottle(e.target.value)} className="mt-2 w-full rounded-xl border px-3 py-2">
+                <select value={bottle} onChange={e=>setBottle(e.target.value)} className="mt-2 w-full rounded-xl border px-3 py-2">
                   <option>32oz Hydro</option>
                   <option>40oz Hydro</option>
                   <option>Stanley 30oz</option>
@@ -289,7 +294,7 @@
               </div>
               <div>
                 <label className="text-sm font-medium">Finish</label>
-                <select value={finish} onChange={(e)=>setFinish(e.target.value)} className="mt-2 w-full rounded-xl border px-3 py-2">
+                <select value={finish} onChange={e=>setFinish(e.target.value)} className="mt-2 w-full rounded-xl border px-3 py-2">
                   <option>Gloss</option>
                   <option>Matte</option>
                   <option>Satin</option>
@@ -317,116 +322,128 @@
           </Card>
         </Section>
       );
-    }
+    };
 
-    function Cart({ goTo }) {
-      return (
-        <Section title="Your Cart" subtitle="Review items and proceed to checkout">
-          <Card>
-            <div className="flex items-center justify-between">
-              <div>
-                <div className="font-medium">Custom Wrap – 32oz Hydro (Gloss)</div>
-                <div className="text-sm text-gray-600">1 × $12.99 • Free replacement if mis-sized</div>
-              </div>
-              <div className="text-lg font-semibold">$12.99</div>
+    const Cart = ({ goTo }) => (
+      <Section title="Your Cart" subtitle="Review items and proceed to checkout">
+        <Card>
+          <div className="flex items-center justify-between">
+            <div>
+              <div className="font-medium">Custom Wrap – 32oz Hydro (Gloss)</div>
+              <div className="text-sm text-gray-600">1 × $12.99 • Free replacement if mis-sized</div>
             </div>
-            <div className="mt-4 flex justify-end gap-3">
-              <button className="rounded-xl border px-3 py-2" onClick={()=>goTo(1)}>Continue shopping</button>
-              <button className="rounded-xl bg-black text-white px-3 py-2" onClick={()=>goTo(5)}>Checkout</button>
+            <div className="text-lg font-semibold">$12.99</div>
+          </div>
+          <div className="mt-4 flex justify-end gap-3">
+            <button className="rounded-xl border px-3 py-2" onClick={()=>goTo(1)}>Continue shopping</button>
+            <button className="rounded-xl bg-black text-white px-3 py-2" onClick={()=>goTo(5)}>Checkout</button>
+          </div>
+        </Card>
+      </Section>
+    );
+
+    const Checkout = ({ onDone }) => (
+      <Section title="Checkout" subtitle="Secure mock checkout – no payment processed">
+        <div className="grid md:grid-cols-3 gap-6">
+          <Card>
+            <h3 className="font-medium">Contact</h3>
+            <input placeholder="Email" className="mt-2 w-full rounded-xl border px-3 py-2" />
+            <input placeholder="Phone (optional)" className="mt-2 w-full rounded-xl border px-3 py-2" />
+            <div className="mt-3 text-xs text-gray-600">Create an account at the end to save your order.</div>
+          </Card>
+          <Card>
+            <h3 className="font-medium">Shipping</h3>
+            <input placeholder="Full name" className="mt-2 w-full rounded-xl border px-3 py-2" />
+            <input placeholder="Address" className="mt-2 w-full rounded-xl border px-3 py-2" />
+            <div className="grid grid-cols-2 gap-2 mt-2">
+              <input placeholder="City" className="rounded-xl border px-3 py-2" />
+              <input placeholder="ZIP" className="rounded-xl border px-3 py-2" />
             </div>
           </Card>
-        </Section>
-      );
-    }
+          <Card>
+            <h3 className="font-medium">Payment</h3>
+            <input placeholder="Card number" className="mt-2 w-full rounded-xl border px-3 py-2" />
+            <div className="grid grid-cols-2 gap-2 mt-2">
+              <input placeholder="MM/YY" className="rounded-xl border px-3 py-2" />
+              <input placeholder="CVC" className="rounded-xl border px-3 py-2" />
+            </div>
+            <button className="mt-4 w-full rounded-xl bg-black text-white px-3 py-2" onClick={onDone}>Pay $12.99</button>
+          </Card>
+        </div>
+      </Section>
+    );
 
-    function Checkout({ onDone }) {
-      return (
-        <Section title="Checkout" subtitle="Secure mock checkout – no payment processed">
-          <div className="grid md:grid-cols-3 gap-6">
+    const Confirmation = ({ orderId = "EC-48192" }) => (
+      <Section title="Thank you!" subtitle="Your order is confirmed">
+        <Card>
+          <p className="text-sm">Order <span className="font-mono">{orderId}</span> • You’ll receive an email with tracking once shipped.</p>
+          <div className="mt-4 grid md:grid-cols-3 gap-3 text-sm">
             <Card>
-              <h3 className="font-medium">Contact</h3>
-              <input placeholder="Email" className="mt-2 w-full rounded-xl border px-3 py-2" />
-              <input placeholder="Phone (optional)" className="mt-2 w-full rounded-xl border px-3 py-2" />
-              <div className="mt-3 text-xs text-gray-600">Create an account at the end to save your order.</div>
+              <div className="font-medium">Create account</div>
+              <p className="text-gray-600 mt-1">Save your designs and track orders.</p>
+              <button className="mt-3 w-full rounded-xl border px-3 py-2">Sign up</button>
             </Card>
             <Card>
-              <h3 className="font-medium">Shipping</h3>
-              <input placeholder="Full name" className="mt-2 w-full rounded-xl border px-3 py-2" />
-              <input placeholder="Address" className="mt-2 w-full rounded-xl border px-3 py-2" />
-              <div className="grid grid-cols-2 gap-2 mt-2">
-                <input placeholder="City" className="rounded-xl border px-3 py-2" />
-                <input placeholder="ZIP" className="rounded-xl border px-3 py-2" />
-              </div>
+              <div className="font-medium">Installation tips</div>
+              <ul className="list-disc pl-5 mt-1 space-y-1 text-gray-600">
+                <li>Clean surface with isopropyl alcohol</li>
+                <li>Align, then squeegee outward to remove air</li>
+                <li>For re-use, store liner and roll gently</li>
+              </ul>
             </Card>
             <Card>
-              <h3 className="font-medium">Payment</h3>
-              <input placeholder="Card number" className="mt-2 w-full rounded-xl border px-3 py-2" />
-              <div className="grid grid-cols-2 gap-2 mt-2">
-                <input placeholder="MM/YY" className="rounded-xl border px-3 py-2" />
-                <input placeholder="CVC" className="rounded-xl border px-3 py-2" />
-              </div>
-              <button className="mt-4 w-full rounded-xl bg-black text-white px-3 py-2" onClick={onDone}>Pay $12.99</button>
+              <div className="font-medium">Need help?</div>
+              <p className="text-gray-600 mt-1">If your wrap arrives mis-sized or bubbly, request a free replacement.</p>
+              <button className="mt-3 w-full rounded-xl border px-3 py-2">Contact support</button>
             </Card>
           </div>
-        </Section>
-      );
-    }
+        </Card>
+      </Section>
+    );
 
-    function Confirmation({ orderId = "EC-48192" }) {
-      return (
-        <Section title="Thank you!" subtitle="Your order is confirmed">
+    const Support = () => (
+      <Section title="Support">
+        <div className="grid md:grid-cols-2 gap-6">
           <Card>
-            <p className="text-sm">Order <span className="font-mono">{orderId}</span> • You’ll receive an email with tracking once shipped.</p>
-            <div className="mt-4 grid md:grid-cols-3 gap-3 text-sm">
-              <Card>
-                <div className="font-medium">Create account</div>
-                <p className="text-gray-600 mt-1">Save your designs and track orders.</p>
-                <button className="mt-3 w-full rounded-xl border px-3 py-2">Sign up</button>
-              </Card>
-              <Card>
-                <div className="font-medium">Installation tips</div>
-                <ul className="list-disc pl-5 mt-1 space-y-1 text-gray-600">
-                  <li>Clean surface with isopropyl alcohol</li>
-                  <li>Align, then squeegee outward to remove air</li>
-                  <li>For re-use, store liner and roll gently</li>
-                </ul>
-              </Card>
-              <Card>
-                <div className="font-medium">Need help?</div>
-                <p className="text-gray-600 mt-1">If your wrap arrives mis-sized or bubbly, request a free replacement.</p>
-                <button className="mt-3 w-full rounded-xl border px-3 py-2">Contact support</button>
-              </Card>
+            <h3 className="font-medium">FAQs</h3>
+            <div className="mt-3 divide-y">
+              {faqs.map((f,i)=>(
+                <div key={i} className="py-3">
+                  <div className="font-medium">{f.q}</div>
+                  <p className="text-sm text-gray-600">{f.a}</p>
+                </div>
+              ))}
             </div>
           </Card>
-        </Section>
-      );
-    }
+          <Card>
+            <h3 className="font-medium">Contact</h3>
+            <input placeholder="Email" className="mt-2 w-full rounded-xl border px-3 py-2" />
+            <textarea placeholder="How can we help?" className="mt-2 w-full rounded-xl border px-3 py-2 h-28"></textarea>
+            <button className="mt-3 w-full rounded-xl bg-black text-white px-3 py-2">Send</button>
+          </Card>
+        </div>
+      </Section>
+    );
 
-    function Support() {
-      return (
-        <Section title="Support">
-          <div className="grid md:grid-cols-2 gap-6">
-            <Card>
-              <h3 className="font-medium">FAQs</h3>
-              <div className="mt-3 divide-y">
-                {faqs.map((f, i) => (
-                  <div key={i} className="py-3">
-                    <div className="font-medium">{f.q}</div>
-                    <p className="text-sm text-gray-600">{f.a}</p>
-                  </div>
-                ))}
-              </div>
-            </Card>
-            <Card>
-              <h3 className="font-medium">Contact</h3>
-              <input placeholder="Email" className="mt-2 w-full rounded-xl border px-3 py-2" />
-              <textarea placeholder="How can we help?" className="mt-2 w-full rounded-xl border px-3 py-2 h-28"></textarea>
-              <button className="mt-3 w-full rounded-xl bg-black text-white px-3 py-2">Send</button>
-            </Card>
-          </div>
-        </Section>
-      );
-    }
+    const Account = () => (
+      <Section title="Account">
+        <div className="grid md:grid-cols-2 gap-6">
+          <Card>
+            <h3 className="font-medium">Sign in</h3>
+            <input placeholder="Email" className="mt-2 w-full rounded-xl border px-3 py-2" />
+            <input placeholder="Password" className="mt-2 w-full rounded-xl border px-3 py-2" />
+            <button className="mt-3 w-full rounded-xl bg-black text-white px-3 py-2">Sign in</button>
+          </Card>
+          <Card>
+            <h3 className="font-medium">Create account</h3>
+            <input placeholder="Name" className="mt-2 w-full rounded-xl border px-3 py-2" />
+            <input placeholder="Email" className="mt-2 w-full rounded-xl border px-3 py-2" />
+            <input placeholder="Password" className="mt-2 w-full rounded-xl border px-3 py-2" />
+            <button className="mt-3 w-full rounded-xl border px-3 py-2">Sign up</button>
+          </Card>
+        </div>
+      </Section>
+    );
 
     const MobileFrame = ({ children }) => (
       <div className="mx-auto my-6 rounded-[32px] border shadow-lg w-[360px] overflow-hidden bg-white">
@@ -435,6 +452,7 @@
       </div>
     );
 
+    /* ---------- APP ---------- */
     function App() {
       const [route, setRoute] = useState({ name: "home" });
       const [step, setStep] = useState(0);
@@ -450,16 +468,16 @@
             <div className="text-xs text-gray-500">Prototype: no real orders placed</div>
           </div>
 
-          {route.name === "home" && <Home goTo={goTo} onNavigate={(n, d) => { if(n==="product") setStep(2); onNavigate(n, d); }} />}
-          {route.name === "materials" && <Materials />}
-          {route.name === "pricing" && <Pricing />}
-          {route.name === "support" && <Support />}
-          {route.name === "account" && <Account />}
-          {route.name === "product" && <Product product={route.data} onCustomize={() => { setStep(3); onNavigate("customizer"); }} />}
-          {route.name === "customizer" && <Customizer onAddToCart={() => { setStep(4); onNavigate("cart"); }} />}
-          {route.name === "cart" && <Cart goTo={(s)=>{ setStep(s); if(s===5) onNavigate("checkout"); }} />}
-          {route.name === "checkout" && <Checkout onDone={() => { setStep(6); onNavigate("done"); }} />}
-          {route.name === "done" && <Confirmation />}
+          {route.name==="home" && <Home goTo={goTo} onNavigate={(n,d)=>{ if(n==="product") setStep(2); onNavigate(n,d); }} />}
+          {route.name==="materials" && <Materials />}
+          {route.name==="pricing" && <Pricing />}
+          {route.name==="support" && <Support />}
+          {route.name==="account" && <Account />}
+          {route.name==="product" && <Product product={route.data} onCustomize={()=>{ setStep(3); onNavigate("customizer"); }} />}
+          {route.name==="customizer" && <Customizer onAddToCart={()=>{ setStep(4); onNavigate("cart"); }} />}
+          {route.name==="cart" && <Cart goTo={(s)=>{ setStep(s); if(s===5) onNavigate("checkout"); }} />}
+          {route.name==="checkout" && <Checkout onDone={()=>{ setStep(6); onNavigate("done"); }} />}
+          {route.name==="done" && <Confirmation />}
 
           <footer className="border-t mt-10">
             <div className="max-w-6xl mx-auto px-4 py-8 text-sm text-gray-600 grid md:grid-cols-3 gap-6">
@@ -491,7 +509,7 @@
       return (
         <div className="min-h-screen bg-white text-black">
           <Navbar
-            onNavigate={(n, d)=>{ if(n==="customizer") setStep(3); if(n==="cart") setStep(4); onNavigate(n, d); }}
+            onNavigate={(n,d)=>{ if(n==="customizer") setStep(3); if(n==="cart") setStep(4); onNavigate(n,d); }}
             current={route.name}
             mobileView={mobileView}
             setMobileView={setMobileView}
